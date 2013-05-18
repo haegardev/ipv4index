@@ -137,8 +137,7 @@ int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
 }
 
 
-//FIXME an int is sufficent as return value
-ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
+int load_bitindex(ipv4index_t* self, char* filename)
 {
     gzFile *fp;
     int r;
@@ -148,7 +147,7 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
 
     self->header = calloc(sizeof(ipv4cache_hdr_t),1);
     if (!self->header)
-        return NULL;
+        return 0;
     fp = gzopen(filename,"rb");
     if (fp) {
         if (load_ipv4cache_hdr(self,fp)){
@@ -156,7 +155,7 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
             r = gzread(fp, self->bitindex, SPACE_SIZE);
             if (r == SPACE_SIZE) {
                 gzclose(fp);
-                return self->header;    
+                return 1;  
             } else{
                 self->error_code = ERR_TRUNCFILE;
             }
@@ -167,6 +166,6 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
         self->shadow_errno = errno;
     }
     /* There was an error somewhere */
-    return NULL;    
+    return 0;    
 }
 

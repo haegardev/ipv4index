@@ -302,7 +302,6 @@ int query_addr (char* sourcefile, int segment_id)
     char *istr;
     int i,r;
     uint32_t addr;
-    ipv4cache_hdr_t* hdr;
     ipv4index_t* ipv4index;
 
     r = EXIT_FAILURE;
@@ -314,8 +313,7 @@ int query_addr (char* sourcefile, int segment_id)
         if (!(ipv4index = bitindex_new(SPACE, FULLIPV4INDEX)))
             goto oret;
         //fprintf(stderr,"[DEBUG] use local memory\n"); 
-        hdr = load_bitindex(ipv4index, sourcefile);
-        if (!hdr)
+        if (!load_bitindex(ipv4index, sourcefile))
             goto oret;
     } else {
         if (!(ipv4index = bitindex_new(SPACE, BAREIPV4INDEX)))
@@ -346,9 +344,9 @@ int query_addr (char* sourcefile, int segment_id)
                  *not known
                  */
                 if (!segment_id){
-                    printf("%s %s %d %d\n",istr, hdr->source[0], 
-                                      (uint32_t)hdr->firstseen.tv_sec, 
-                                      (uint32_t)hdr->lastseen.tv_sec); 
+                    printf("%s %s %d %d\n",istr, ipv4index->header->source[0], 
+                                      (uint32_t)ipv4index->header->firstseen.tv_sec, 
+                                      (uint32_t)ipv4index->header->lastseen.tv_sec); 
                 }else{
                     /* If the IP address is in the bitindex the ip address 
                      * is printed on stdout otherwise nothing is printed
@@ -374,8 +372,9 @@ oret:
                        segment_id, strerror(errno));
         r = EXIT_FAILURE;
     }
-    if (hdr)
-        free(hdr);    
+    //FIXME write a destructor for ipv4index instance
+    if (ipv4index)
+        free(ipv4index);    
     return r;
 }
 
