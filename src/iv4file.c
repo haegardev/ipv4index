@@ -84,3 +84,31 @@ ipv4cache_hdr_t* create_local_header(char* source)
     return build_netflow_hdr(source, (tz_data_t*)&tz);
 }
 
+int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
+{
+    gzFile *fp;
+    int r,out;
+    out = 0; 
+    fp = gzopen(filename,"wb");
+    if (fp) {
+        r = gzwrite(fp, hdr, sizeof(ipv4cache_hdr_t));
+        if (r == sizeof(ipv4cache_hdr_t)) {
+            r = gzwrite(fp, bitindex, SPACE_SIZE);
+            if (r == SPACE_SIZE) {
+                out = 1;
+            }else{
+                //TODO add errno per instance
+                //fprintf(stderr,"Could not store bitindex");
+            }
+        }else{
+            //TODO add errno per instance
+            //fprintf(stderr,"Could not store header\n");
+        }
+        gzclose(fp);
+    } else{
+        //TODO add errno per instance
+        //fprintf(stderr,"Could not open file %s. cause: %s\n",filename,
+        //                                              strerror(errno));
+    }
+    return out;
+}

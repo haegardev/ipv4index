@@ -35,5 +35,13 @@ int load_ipv4cache_hdr(gzFile* fp, ipv4cache_hdr_t* hdr );
  * Returns the results of the function build_netflow_hdr
  */
 ipv4cache_hdr_t* create_local_header(char* source);
+/* A bitindex is stored in a gzipped file. The filename argument specify the 
+ * filename where the bitindex is stored. The header passed as command line
+ * argument should have been build before. 
+ * A header is also passed as command line argument.  
+ * Returns 1 on success.
+ * Returns 0 on error.
+ */
+int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex);
 #endif
 

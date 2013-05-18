@@ -155,39 +155,6 @@ int index_nfcapd_file(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
 }
 
 
-/* A bitindex is stored in a gzipped file. The filename argument specify the 
- * filename where the bitindex is stored. The header passed as command line
- * argument should have been build before. 
- * A header is also passed as command line argument.  
- * Returns 1 on success.
- * Returns 0 on error.
- */
-int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
-{
-    gzFile *fp;
-    int r,out;
-    out = 0; 
-    fp = gzopen(filename,"wb");
-    if (fp) {
-        r = gzwrite(fp, hdr, sizeof(ipv4cache_hdr_t));
-        if (r == sizeof(ipv4cache_hdr_t)) {
-            r = gzwrite(fp, bitindex, SPACE_SIZE);
-            if (r == SPACE_SIZE) {
-                out = 1;
-            }else{
-                fprintf(stderr,"Could not store bitindex");
-            }
-        }else{
-            fprintf(stderr,"Could not store header\n");
-        }
-        gzclose(fp);
-    } else{
-        fprintf(stderr,"Could not open file %s. cause: %s\n",filename,
-                                                      strerror(errno));
-    }
-    return out;
-}
-
 /* Loads a previously stored bitindex and update the bitindex parameter.
  * The filename identifies the location of the bitindex. 
  * Returns on success the header of the file is returned as this data 
