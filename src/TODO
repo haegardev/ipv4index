@@ -1,1 +1,12 @@
 TODO write tests for each functions
+TODO put metadata on top of shared memory segment as this area is not addressable
+in 32bit mode
+TODO Instead of having a complex program nf-bitindex create multiple small programs
+TODO write multiple sources (netflow, pcap, binary IP list, dotted decimal IP list)
+TODO dump local/shared memory segments
+TODO Implement set functions union, intersection, diff
+TODO Check a list of IP addresses -> bulk check to reduce IO
+TODO While going through a source update multiple bitindexes at the same time
+     to avoid reprocessing
+
+
