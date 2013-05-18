@@ -43,6 +43,6 @@ int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
  * structure contains all the meta data of the bitindex.
  * Returns on error NULL.
  */ 
-ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex);
+ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename);
 #endif
 

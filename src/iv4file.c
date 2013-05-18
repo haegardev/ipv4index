@@ -138,7 +138,7 @@ int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
     return out;
 }
 
-ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex)
+ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
 {
     gzFile *fp;
     int r;
@@ -153,7 +153,7 @@ ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex)
     if (fp) {
         if (load_ipv4cache_hdr(fp, hdr)){
             /* Header was loaded and checks passed load bitindex*/
-            r = gzread(fp, bitindex, SPACE_SIZE);
+            r = gzread(fp, self->bitindex, SPACE_SIZE);
             if (r == SPACE_SIZE) {
                 gzclose(fp);
                 return hdr;    
