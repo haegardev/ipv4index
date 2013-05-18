@@ -301,6 +301,8 @@ int query_addr (char* sourcefile, int segment_id)
     uint32_t addr;
     ipv4cache_hdr_t* hdr;
     uint8_t* bitindex;
+    ipv4index_t* ipv4index;
+
     r = EXIT_FAILURE;
     istr  = calloc(64,1);
     if (!istr)
@@ -308,10 +310,10 @@ int query_addr (char* sourcefile, int segment_id)
     bitindex = NULL;
     
     if (!segment_id) {
-        //fprintf(stderr,"[DEBUG] use local memory\n"); 
-        bitindex = bitindex_new(SPACE);
-        if (!bitindex)
+        if (!(ipv4index = bitindex_new(SPACE)))
             goto oret;
+        bitindex = ipv4index->bitindex; 
+        //fprintf(stderr,"[DEBUG] use local memory\n"); 
         hdr = load_bitindex(sourcefile, bitindex);
         if (!hdr)
             goto oret;
