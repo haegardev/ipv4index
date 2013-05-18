@@ -494,7 +494,7 @@ size_t get_max_shm(void)
     fp = fopen("/proc/sys/kernel/shmmax","r");
     if (fp){
         //FIXME use a safer function
-        fscanf(fp,"%ld",&v);    
+        fscanf(fp,"%ld",(long int*)&v);    
         fclose(fp);
     }else{
         fprintf(stderr,"Cannot open /proc/sys/kernel/shmmax cause=%s\n",
@@ -514,10 +514,10 @@ int init_shm(char* idfile)
     size_t s;
     s = SPACE_SIZE;
     if (s > get_max_shm()) {
-        fprintf(stderr,"Your system does not support shared memory segments of %ld bytes\n",s);
+        fprintf(stderr,"Your system does not support shared memory segments of %ld bytes\n",(long int)s);
         return EXIT_FAILURE;
     }   
-    printf("s=%ld\n",s); 
+    printf("s=%ld\n",(long int)s); 
     hnd = shmget(IPC_PRIVATE, s, IPC_CREAT | IPC_EXCL | S_IRUSR | S_IWUSR);
     if (hnd > 0) {
         fp = fopen(idfile,"w");
