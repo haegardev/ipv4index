@@ -315,7 +315,7 @@ int query_addr (char* sourcefile, int segment_id)
         if (!(ipv4index = bitindex_new(SPACE, FULLIPV4INDEX)))
             goto oret;
         //fprintf(stderr,"[DEBUG] use local memory\n"); 
-        hdr = load_bitindex(sourcefile, ipv4index->bitindex);
+        hdr = load_bitindex(ipv4index, sourcefile);
         if (!hdr)
             goto oret;
     } else {
