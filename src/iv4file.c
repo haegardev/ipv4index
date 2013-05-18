@@ -112,3 +112,34 @@ int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
     }
     return out;
 }
+
+ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex)
+{
+    gzFile *fp;
+    int r;
+    ipv4cache_hdr_t* hdr;
+    //FIXME use softer alternative
+    //assert(filename && bitindex);
+
+    hdr = calloc(sizeof(ipv4cache_hdr_t),1);
+    if (!hdr)
+        return NULL;
+    fp = gzopen(filename,"rb");
+    if (fp) {
+        if (load_ipv4cache_hdr(fp, hdr)){
+            /* Header was loaded and checks passed load bitindex*/
+            r = gzread(fp, bitindex, SPACE_SIZE);
+            if (r == SPACE_SIZE) {
+                gzclose(fp);
+                return hdr;    
+            } else{
+                //TODO use proper error handling
+                //fprintf(stderr,"File %s seems to be truncated\n",filename);    
+            }
+        }
+        gzclose(fp);
+    }
+    /* There was an error somewhere */
+    return NULL;    
+}
+

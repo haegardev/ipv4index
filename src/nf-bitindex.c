@@ -155,41 +155,6 @@ int index_nfcapd_file(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
 }
 
 
-/* Loads a previously stored bitindex and update the bitindex parameter.
- * The filename identifies the location of the bitindex. 
- * Returns on success the header of the file is returned as this data 
- * structure contains all the meta data of the bitindex.
- * Returns on error NULL.
- */ 
-ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex)
-{
-    gzFile *fp;
-    int r;
-    ipv4cache_hdr_t* hdr;
-
-    assert(filename && bitindex);
-
-    hdr = calloc(sizeof(ipv4cache_hdr_t),1);
-    if (!hdr)
-        return NULL;
-    fp = gzopen(filename,"rb");
-    if (fp) {
-        if (load_ipv4cache_hdr(fp, hdr)){
-            /* Header was loaded and checks passed load bitindex*/
-            r = gzread(fp, bitindex, SPACE_SIZE);
-            if (r == SPACE_SIZE) {
-                gzclose(fp);
-                return hdr;    
-            } else{
-                fprintf(stderr,"File %s seems to be truncated\n",filename);    
-            }
-        }
-        gzclose(fp);
-    }
-    /* There was an error somewhere */
-    return NULL;    
-}
-
 void usage(void)
 {
     printf("nf-bitindex - Put IPv4 addresses extracted from nfcapd files in a bitindex\n");

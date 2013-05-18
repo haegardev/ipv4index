@@ -43,5 +43,12 @@ ipv4cache_hdr_t* create_local_header(char* source);
  * Returns 0 on error.
  */
 int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex);
+/* Loads a previously stored bitindex and update the bitindex parameter.
+ * The filename identifies the location of the bitindex. 
+ * Returns on success the header of the file is returned as this data 
+ * structure contains all the meta data of the bitindex.
+ * Returns on error NULL.
+ */ 
+ipv4cache_hdr_t* load_bitindex(char* filename, uint8_t* bitindex);
 #endif
 
