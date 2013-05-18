@@ -41,7 +41,7 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include "ipv4index.h"             
-
+#include "iv4file.h"
 ipv4cache_hdr_t* create_local_header(char* source);
 
 
@@ -56,20 +56,6 @@ uint8_t* bitindex_new(uint32_t nelem)
 {
     uint8_t* bitindex;
     return bitindex = calloc((nelem / 8) + 1,1);
-}
-
-/*
- * Helper function for the function build_netflow_hdr. This function sets the
- * current timezone settings in the ipv4cache_hdr_t headers specified as 
- * as parameter. The header passed as parameter is modified.
- */
-void set_current_tz(ipv4cache_hdr_t* hdr)
-{
-    tzset();
-    hdr->creator_tz.timezone = timezone;
-    strncpy(hdr->creator_tz.tzname[0], tzname[0], TZSZ);
-    strncpy(hdr->creator_tz.tzname[1], tzname[1], TZSZ);
-    hdr->creator_tz.daylight = daylight;
 }
 
 /* Creates a simplified new header for a bitindex file. A source can be 

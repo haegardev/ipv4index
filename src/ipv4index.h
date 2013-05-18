@@ -18,6 +18,8 @@
  */
 #ifndef IPV4INDEX
 #define IPV4INDEX
+#include <stdint.h>
+#include <sys/time.h>
 #define BITINDEX_SET(bs, addr) bs[addr>>3] |= 1 << (addr-((addr>>3)<<3))
 #define SPACE 0xFFFFFFFF
 #define LASTBLOCK 536854528
