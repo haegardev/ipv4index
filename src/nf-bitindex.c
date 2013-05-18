@@ -48,14 +48,22 @@ ipv4cache_hdr_t* create_local_header(char* source);
 /*
  * Initialize a new bitindex.
  * The number of bits is specified with the parameter nelem.
- * Returns a pointer to the bitindex on success.
+ * Returns a pointer to the an ipv4index structure on success.
+ * The bitindex itself is in ipv4index->bitindex which also initialized
  * Returns NULL when no memory is available.
  * The memory should be freed when it is not used.
  */
-uint8_t* bitindex_new(uint32_t nelem)
+ipv4index_t* bitindex_new(uint32_t nelem)
 {
-    uint8_t* bitindex;
-    return bitindex = calloc((nelem / 8) + 1,1);
+    ipv4index_t* self;
+    self = calloc(sizeof(ipv4index_t),1);
+    if (self) {
+        self->bitindex = calloc((nelem / 8) + 1 , 1);
+        if (self->bitindex)
+            return self; 
+    }
+    /* Somewhere no memory is available */
+    return NULL;
 }
 
 
@@ -207,6 +215,7 @@ int batch_processing(char *source, char* targetfile, int segment_id)
     char *filename;
     uint8_t* bitindex;
     ipv4cache_hdr_t* hdr;
+    ipv4index_t* ipv4index;
  
     r = EXIT_FAILURE; /* Return code */
     /* FIXME assume that the timezone of the netflow collector is the same
@@ -229,8 +238,9 @@ int batch_processing(char *source, char* targetfile, int segment_id)
         }
     }else{
         printf("[INFO] No shared memory used, use local memory\n");
-        if (!(bitindex = bitindex_new(SPACE)))
+        if (!(ipv4index = bitindex_new(SPACE)))
             goto out;
+        bitindex = ipv4index->bitindex;
     }
     /* A bit index is needed here either shared or private */
     assert(bitindex);

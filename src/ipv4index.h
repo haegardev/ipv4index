@@ -47,7 +47,8 @@
 
 #define TZSZ 32
 /* IPv4Cache Header */                                                          
-    
+
+#define ERRDATAMAX 64    
 typedef struct tz_data_s {
     uint64_t timezone;
     char     tzname [TZSZ][2];
@@ -70,4 +71,9 @@ typedef struct ipv4cache_hdr_s {
     char            description[HDRSTRSZ];                                          
 }ipv4cache_hdr_t;                     
 
+typedef struct ipv4index_s {
+    uint8_t* bitindex;
+    uint16_t iv4errno;
+    char errdata[ERRDATAMAX];
+} ipv4index_t;
 #endif
