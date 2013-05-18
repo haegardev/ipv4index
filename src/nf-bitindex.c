@@ -53,14 +53,17 @@ ipv4cache_hdr_t* create_local_header(char* source);
  * Returns NULL when no memory is available.
  * The memory should be freed when it is not used.
  */
-ipv4index_t* bitindex_new(uint32_t nelem)
+ipv4index_t* bitindex_new(uint32_t nelem, int flags)
 {
     ipv4index_t* self;
     self = calloc(sizeof(ipv4index_t),1);
     if (self) {
-        self->bitindex = calloc((nelem / 8) + 1 , 1);
-        if (self->bitindex)
-            return self; 
+        if (flags) {
+            self->bitindex = calloc((nelem / 8) + 1 , 1);
+            if (!self->bitindex)
+                return NULL;
+        }
+        return self; 
     }
     /* Somewhere no memory is available */
     return NULL;
@@ -213,7 +216,6 @@ int batch_processing(char *source, char* targetfile, int segment_id)
 {
     int i,r;
     char *filename;
-    uint8_t* bitindex;
     ipv4cache_hdr_t* hdr;
     ipv4index_t* ipv4index;
  
@@ -224,11 +226,12 @@ int batch_processing(char *source, char* targetfile, int segment_id)
     if (!(hdr = create_local_header(source)))
         goto out;
     
-    bitindex = NULL; 
     /* Check if the data should be exported in shared memory segment */
     if (segment_id){
+        if (!(ipv4index=bitindex_new(SPACE, BAREIPV4INDEX)))
+            goto out;
         printf("[INFO] Trying to connect to segment_id %d\n", segment_id);
-        if ((bitindex=(uint8_t*)shmat(segment_id, 0, SHM_RND)) < 0){
+        if ((ipv4index->bitindex=(uint8_t*)shmat(segment_id, 0, SHM_RND)) < 0){
             printf("Failed to attach to shared memory segment id=%d cause=%s\n",
                     segment_id, strerror(errno));
             goto out;
@@ -238,12 +241,10 @@ int batch_processing(char *source, char* targetfile, int segment_id)
         }
     }else{
         printf("[INFO] No shared memory used, use local memory\n");
-        if (!(ipv4index = bitindex_new(SPACE)))
+        if (!(ipv4index = bitindex_new(SPACE, FULLIPV4INDEX)))
             goto out;
-        bitindex = ipv4index->bitindex;
     }
     /* A bit index is needed here either shared or private */
-    assert(bitindex);
     filename = calloc(1024,1);
     if (!filename)  
         goto out;
@@ -258,13 +259,13 @@ int batch_processing(char *source, char* targetfile, int segment_id)
             }
         }
         printf("[INFO] Processing %s\n",filename);
-        if (!index_nfcapd_file(filename, hdr, bitindex)){
+        if (!index_nfcapd_file(filename, hdr, ipv4index->bitindex)){
             printf("[ERROR] Could not process %s\n",filename);
         }
     }
     if (targetfile) {
         printf("[INFO] Creating %s\n",targetfile);
-        if (store_bitindex(targetfile, hdr, bitindex)){
+        if (store_bitindex(targetfile, hdr, ipv4index->bitindex)){
             printf("[INFO] Sucessfully created %s",targetfile);
             r = EXIT_SUCCESS;
         } else {
@@ -281,12 +282,15 @@ int batch_processing(char *source, char* targetfile, int segment_id)
 out:
     if (hdr)
         free(hdr);
-    if (!segment_id && (bitindex))
-        free(bitindex);
+    //FIXME write a destructor
+    if (!segment_id && ipv4index && ipv4index->bitindex)
+        free(ipv4index->bitindex);
+    if (!segment_id && ipv4index)
+        free(ipv4index);
     if (filename)
         free(filename);
     /* Detach from shared memory segment if needed */
-    if ((segment_id>0) && (shmdt(bitindex))<0){
+    if ((segment_id>0) && (shmdt(ipv4index->bitindex))<0){
         fprintf(stderr,"Failed to detach from segment_id %d, cause=%s\n",
                        segment_id, strerror(errno));
         r = EXIT_FAILURE;
@@ -300,33 +304,32 @@ int query_addr (char* sourcefile, int segment_id)
     int i,r;
     uint32_t addr;
     ipv4cache_hdr_t* hdr;
-    uint8_t* bitindex;
     ipv4index_t* ipv4index;
 
     r = EXIT_FAILURE;
     istr  = calloc(64,1);
     if (!istr)
         goto oret;
-    bitindex = NULL;
     
     if (!segment_id) {
-        if (!(ipv4index = bitindex_new(SPACE)))
+        if (!(ipv4index = bitindex_new(SPACE, FULLIPV4INDEX)))
             goto oret;
-        bitindex = ipv4index->bitindex; 
         //fprintf(stderr,"[DEBUG] use local memory\n"); 
-        hdr = load_bitindex(sourcefile, bitindex);
+        hdr = load_bitindex(sourcefile, ipv4index->bitindex);
         if (!hdr)
             goto oret;
     } else {
+        if (!(ipv4index = bitindex_new(SPACE, BAREIPV4INDEX)))
+            goto oret;
         //fprintf(stderr,"[DEBUG] use shared memory segment\n");
-        if ((bitindex=(uint8_t*)shmat(segment_id, 0, SHM_RND)) < 0){
-            printf("%p\n",bitindex);
+        if ((ipv4index->bitindex=(uint8_t*)shmat(segment_id, 0, SHM_RND)) < 0){
+            printf("%p\n",ipv4index->bitindex);
             fprintf(stderr,"Failed to attach to segment_id %d cause=%s\n",
                     segment_id, strerror(errno));
             goto oret;
         }
     }
-    assert(bitindex);
+    assert(ipv4index->bitindex);
     while (fgets(istr, 64, stdin)){
         istr[63] = 0;
         /* Replace the new line */
@@ -338,7 +341,7 @@ int query_addr (char* sourcefile, int segment_id)
         }
         addr = 0; 
         if (inet_pton(AF_INET, istr,&addr)){ 
-            if (test_bit(bitindex, addr)){
+            if (test_bit(ipv4index->bitindex, addr)){
                 /* FIXME In shared memory segment no header is present, that
                  *should be done in the future. Otherwise metainformation are 
                  *not known
@@ -363,10 +366,11 @@ int query_addr (char* sourcefile, int segment_id)
 oret:
     if (istr)
         free(istr);
-    if (!segment_id && (bitindex))
-        free(bitindex);
+    //FIXME build destructor
+    if (!segment_id && ipv4index &&ipv4index->bitindex)
+        free(ipv4index->bitindex);
     /* Detach from shared memory segment if needed */
-    if ((segment_id>0) && (shmdt(bitindex))<0){
+    if ((segment_id>0) && (shmdt(ipv4index->bitindex))<0){
         fprintf(stderr,"Failed to detach from segment_id %d, cause=%s\n",
                        segment_id, strerror(errno));
         r = EXIT_FAILURE;

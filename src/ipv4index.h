@@ -49,6 +49,9 @@
 /* IPv4Cache Header */                                                          
 
 #define ERRDATAMAX 64    
+#define BAREIPV4INDEX 0 
+#define FULLIPV4INDEX 1
+
 typedef struct tz_data_s {
     uint64_t timezone;
     char     tzname [TZSZ][2];
