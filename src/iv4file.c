@@ -62,32 +62,33 @@ ipv4cache_hdr_t* build_netflow_hdr(char* source, tz_data_t *tz)
     return hdr;
 }
 
-int load_ipv4cache_hdr(gzFile* fp, ipv4cache_hdr_t* hdr )
+int load_ipv4cache_hdr(ipv4index_t* self, gzFile* fp)
 {
     size_t r;
     /* Clean the memory */
-    bzero(hdr, sizeof(ipv4cache_hdr_t));
-    r = gzread(fp, hdr,  sizeof(ipv4cache_hdr_t));
+    bzero(self->header, sizeof(self->header));
+    r = gzread(fp, self->header,  sizeof(ipv4cache_hdr_t));
     if (r != sizeof(ipv4cache_hdr_t)){
         //FIXME when in a library don't print on stderr
         //fprintf(stderr,"The IPV4CACHE file is too small\n");
         return 0;
     }
     /* Check file magic */
-    if (strncmp((char*)&hdr->magic, IPV4CACHE_MAGIC, strlen(IPV4CACHE_MAGIC))) {
-        hdr->magic[8]=0;
+    if (strncmp((char*)&self->header->magic, IPV4CACHE_MAGIC, 
+        strlen(IPV4CACHE_MAGIC))) {
+        self->header->magic[8]=0;
         //FIXME when in a library don't print on stderr
         //fprintf(stderr,"Invalid magic string: %s\n",hdr->magic);
         return 0;
     }
     /* Check file version */
-    if (hdr->version != IPV4CACHE_VERSION) {
+    if (self->header->version != IPV4CACHE_VERSION) {
         //FIXME when in a library don't print on stderr
         //fprintf(stderr,"Unsupported version of IPV4CACHE: %d\n",hdr->version);
         return 0;
     }
     /* Check the hashing function */
-    if (hdr->hash_function != HASH_ONE_TO_ONE){
+    if (self->header->hash_function != HASH_ONE_TO_ONE){
         //FIXME when in a library don't print on stderr
         //fprintf(stderr, "Unsupported hash function is used: %d\n",
         //        hdr->hash_function);
@@ -144,7 +145,6 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
 {
     gzFile *fp;
     int r;
-    ipv4cache_hdr_t* hdr;
     //FIXME use softer alternative
     //assert(filename && bitindex);
 
@@ -153,7 +153,7 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
         return NULL;
     fp = gzopen(filename,"rb");
     if (fp) {
-        if (load_ipv4cache_hdr(fp,self->header)){
+        if (load_ipv4cache_hdr(self,fp)){
             /* Header was loaded and checks passed load bitindex*/
             r = gzread(fp, self->bitindex, SPACE_SIZE);
             if (r == SPACE_SIZE) {

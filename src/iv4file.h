@@ -22,7 +22,7 @@ ipv4cache_hdr_t* build_netflow_hdr(char* source, tz_data_t *tz);
  * Returns 1 on success
  * Returns 0 on error
  */
-int load_ipv4cache_hdr(gzFile* fp, ipv4cache_hdr_t* hdr );
+int load_ipv4cache_hdr(ipv4index_t* self, gzFile* fp);
 
 /* Set the local observation time zone to the header 
  * A name of the source should be passed as parameter
