@@ -154,20 +154,6 @@ int index_nfcapd_file(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
     return 0;
 }
 
-/* Set the local observation time zone to the header 
- * A name of the source should be passed as parameter
- * Returns the results of the function build_netflow_hdr
- */
-ipv4cache_hdr_t* create_local_header(char* source)
-{
-    tz_data_t tz;
-    tzset();
-    tz.timezone = timezone;
-    strncpy(tz.tzname[0], tzname[0], TZSZ);
-    strncpy(tz.tzname[1], tzname[1], TZSZ);
-    tz.daylight = daylight;
-    return build_netflow_hdr(source, (tz_data_t*)&tz);
-}
 
 /* A bitindex is stored in a gzipped file. The filename argument specify the 
  * filename where the bitindex is stored. The header passed as command line
