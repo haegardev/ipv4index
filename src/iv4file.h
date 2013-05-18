@@ -4,12 +4,6 @@
 #include <time.h>
 #include <string.h>
 #include <zlib.h>
-/*
- * Helper function for the function build_netflow_hdr. This function sets the
- * current timezone settings in the ipv4cache_hdr_t headers specified as 
- * as parameter. The header passed as parameter is modified.
- */
-void set_current_tz(ipv4cache_hdr_t* hdr);
 /* Creates a simplified new header for a bitindex file. A source can be 
  * specified as parameter to identify the source of IP addresses presented
  * in the corresponding bitindex. A timezone structure related to the sources

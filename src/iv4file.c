@@ -19,6 +19,11 @@
 #include "iv4file.h"
 #include "ipv4index.h"
 #include "stdlib.h"
+/*
+ * Helper function for the function build_netflow_hdr. This function sets the
+ * current timezone settings in the ipv4cache_hdr_t headers specified as 
+ * as parameter. The header passed as parameter is modified.
+ */
 void set_current_tz(ipv4cache_hdr_t* hdr)
 {
     tzset();
