@@ -57,7 +57,10 @@
 
 #define ERR_NOSUCHFILE 10
 #define ERR_TRUNCFILE 11
-
+#define ERR_TRUNCHDR 12
+#define ERR_MAGIC 13
+#define ERR_VERSION 14
+#define ERR_HASHFUNCTION 15
 typedef struct tz_data_s {
     uint64_t timezone;
     char     tzname [TZSZ][2];
@@ -83,7 +86,7 @@ typedef struct ipv4cache_hdr_s {
 typedef struct ipv4index_s {
     uint8_t* bitindex;
     uint16_t error_code;
-    char errdata[ERRDATAMAX];
+    char error_data[ERRDATAMAX];
     int shadow_errno;
     ipv4cache_hdr_t* header;
 } ipv4index_t;

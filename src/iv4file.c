@@ -69,29 +69,29 @@ int load_ipv4cache_hdr(ipv4index_t* self, gzFile* fp)
     bzero(self->header, sizeof(self->header));
     r = gzread(fp, self->header,  sizeof(ipv4cache_hdr_t));
     if (r != sizeof(ipv4cache_hdr_t)){
-        //FIXME when in a library don't print on stderr
-        //fprintf(stderr,"The IPV4CACHE file is too small\n");
+        self->error_code = ERR_TRUNCHDR;
         return 0;
     }
     /* Check file magic */
     if (strncmp((char*)&self->header->magic, IPV4CACHE_MAGIC, 
         strlen(IPV4CACHE_MAGIC))) {
         self->header->magic[8]=0;
-        //FIXME when in a library don't print on stderr
-        //fprintf(stderr,"Invalid magic string: %s\n",hdr->magic);
+        self->error_code = ERR_MAGIC;
+        strncpy((char*)&(self->error_data), self->header->magic, ERRDATAMAX);
         return 0;
     }
     /* Check file version */
     if (self->header->version != IPV4CACHE_VERSION) {
-        //FIXME when in a library don't print on stderr
-        //fprintf(stderr,"Unsupported version of IPV4CACHE: %d\n",hdr->version);
+        self->error_code = ERR_VERSION;
+        snprintf((char*)&(self->error_data), ERRDATAMAX,"%d", 
+                 self->header->version);
         return 0;
     }
     /* Check the hashing function */
     if (self->header->hash_function != HASH_ONE_TO_ONE){
-        //FIXME when in a library don't print on stderr
-        //fprintf(stderr, "Unsupported hash function is used: %d\n",
-        //        hdr->hash_function);
+        self->error_code = ERR_HASHFUNCTION;
+        snprintf((char*)&(self->error_data), ERRDATAMAX, "%d" , 
+                 self->header->hash_function);
         return 0;
     } 
     /* Assume the header is fine */

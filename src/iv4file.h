@@ -5,6 +5,7 @@
 #include <string.h>
 #include <zlib.h>
 #include <errno.h>
+#include <stdio.h>
 /* Creates a simplified new header for a bitindex file. A source can be 
  * specified as parameter to identify the source of IP addresses presented
  * in the corresponding bitindex. A timezone structure related to the sources
