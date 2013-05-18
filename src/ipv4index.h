@@ -52,6 +52,12 @@
 #define BAREIPV4INDEX 0 
 #define FULLIPV4INDEX 1
 
+/* ERROR CODES */
+#define INVALID_PARAMETERS 1
+
+#define ERR_NOSUCHFILE 10
+#define ERR_TRUNCFILE 11
+
 typedef struct tz_data_s {
     uint64_t timezone;
     char     tzname [TZSZ][2];
@@ -76,7 +82,7 @@ typedef struct ipv4cache_hdr_s {
 
 typedef struct ipv4index_s {
     uint8_t* bitindex;
-    uint16_t iv4errno;
+    uint16_t error_code;
     char errdata[ERRDATAMAX];
     ipv4cache_hdr_t* header;
 } ipv4index_t;

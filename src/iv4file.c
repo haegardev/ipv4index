@@ -145,8 +145,9 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
 {
     gzFile *fp;
     int r;
-    //FIXME use softer alternative
-    //assert(filename && bitindex);
+    
+    if (!(filename && self->bitindex))
+        self->error_code = INVALID_PARAMETERS;
 
     self->header = calloc(sizeof(ipv4cache_hdr_t),1);
     if (!self->header)
@@ -160,11 +161,12 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
                 gzclose(fp);
                 return self->header;    
             } else{
-                //TODO use proper error handling
-                //fprintf(stderr,"File %s seems to be truncated\n",filename);    
+                self->error_code = ERR_TRUNCFILE;
             }
         }
         gzclose(fp);
+    }else{
+        self->error_code = ERR_NOSUCHFILE;    
     }
     /* There was an error somewhere */
     return NULL;    
