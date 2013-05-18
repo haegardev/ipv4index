@@ -78,5 +78,6 @@ typedef struct ipv4index_s {
     uint8_t* bitindex;
     uint16_t iv4errno;
     char errdata[ERRDATAMAX];
+    ipv4cache_hdr_t* header;
 } ipv4index_t;
 #endif

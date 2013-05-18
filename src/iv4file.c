@@ -138,6 +138,8 @@ int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
     return out;
 }
 
+
+//FIXME an int is sufficent as return value
 ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
 {
     gzFile *fp;
@@ -146,17 +148,17 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
     //FIXME use softer alternative
     //assert(filename && bitindex);
 
-    hdr = calloc(sizeof(ipv4cache_hdr_t),1);
-    if (!hdr)
+    self->header = calloc(sizeof(ipv4cache_hdr_t),1);
+    if (!self->header)
         return NULL;
     fp = gzopen(filename,"rb");
     if (fp) {
-        if (load_ipv4cache_hdr(fp, hdr)){
+        if (load_ipv4cache_hdr(fp,self->header)){
             /* Header was loaded and checks passed load bitindex*/
             r = gzread(fp, self->bitindex, SPACE_SIZE);
             if (r == SPACE_SIZE) {
                 gzclose(fp);
-                return hdr;    
+                return self->header;    
             } else{
                 //TODO use proper error handling
                 //fprintf(stderr,"File %s seems to be truncated\n",filename);    
