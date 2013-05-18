@@ -167,6 +167,7 @@ ipv4cache_hdr_t* load_bitindex(ipv4index_t* self, char* filename)
         gzclose(fp);
     }else{
         self->error_code = ERR_NOSUCHFILE;    
+        self->shadow_errno = errno;
     }
     /* There was an error somewhere */
     return NULL;    
