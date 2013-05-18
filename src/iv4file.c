@@ -123,18 +123,15 @@ int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
             if (r == SPACE_SIZE) {
                 out = 1;
             }else{
-                //TODO add errno per instance
-                //fprintf(stderr,"Could not store bitindex");
+                ipv4index->error_code = ERR_STOREBITIDX;
             }
         }else{
-            //TODO add errno per instance
-            //fprintf(stderr,"Could not store header\n");
+            ipv4index->error_code = ERR_STOREHDR;
         }
         gzclose(fp);
-    } else{
-        //TODO add errno per instance
-        //fprintf(stderr,"Could not open file %s. cause: %s\n",filename,
-        //                                              strerror(errno));
+    } else {
+        ipv4index->error_code = ERR_STOREOPEN;
+        ipv4index->shadow_errno  = errno; 
     }
     return out;
 }

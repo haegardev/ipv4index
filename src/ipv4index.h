@@ -61,6 +61,11 @@
 #define ERR_MAGIC 13
 #define ERR_VERSION 14
 #define ERR_HASHFUNCTION 15
+
+#define ERR_STOREOPEN 20
+#define ERR_GZIPFAIL 21
+#define ERR_STOREHDR 22
+#define ERR_STOREBITIDX 23
 typedef struct tz_data_s {
     uint64_t timezone;
     char     tzname [TZSZ][2];
