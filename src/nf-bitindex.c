@@ -59,45 +59,6 @@ uint8_t* bitindex_new(uint32_t nelem)
 }
 
 
-/* 
- * Loads an ipv4cache header. This function is a helper function for the 
- * function load_bitindex and should not be directly used.
- * The header is read from the file pointer  fp and an empty header structure
- * passed as parameter is updated by this function.
- * Returns 1 on success
- * Returns 0 on error
- */
-int load_ipv4cache_hdr(gzFile* fp, ipv4cache_hdr_t* hdr )
-{
-    size_t r;
-    /* Clean the memory */
-    bzero(hdr, sizeof(ipv4cache_hdr_t));
-    r = gzread(fp, hdr,  sizeof(ipv4cache_hdr_t));
-    if (r != sizeof(ipv4cache_hdr_t)){
-        fprintf(stderr,"The IPV4CACHE file is too small\n");
-        return 0;
-    }
-    /* Check file magic */
-    if (strncmp((char*)&hdr->magic, IPV4CACHE_MAGIC, strlen(IPV4CACHE_MAGIC))) {
-        hdr->magic[8]=0;
-        fprintf(stderr,"Invalid magic string: %s\n",hdr->magic);
-        return 0;
-    }
-    /* Check file version */
-    if (hdr->version != IPV4CACHE_VERSION) {
-        fprintf(stderr,"Unsupported version of IPV4CACHE: %d\n",hdr->version);
-        return 0;
-    }
-    /* Check the hashing function */
-    if (hdr->hash_function != HASH_ONE_TO_ONE){
-        fprintf(stderr, "Unsupported hash function is used: %d\n",
-                hdr->hash_function);
-        return 0;
-    } 
-    /* Assume the header is fine */
-    return 1;
-}
-
 /* Sets a bit related to an IPV4 address defined in the parameter addr. The 
  * bitset bs is updated. If a lot of such INSERT operations are done, this
  * function should not be used because for each operation a stackframe is 
