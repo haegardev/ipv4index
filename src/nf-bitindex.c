@@ -40,55 +40,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#define BITINDEX_SET(bs, addr) bs[addr>>3] |= 1 << (addr-((addr>>3)<<3))
-#define SPACE 0xFFFFFFFF
-#define LASTBLOCK 536854528
-#define SPACE_SIZE SPACE / 8 + 1
-#define CHUNK 16384 
-#define NO_MEMORY 3
-#define TARGET_FILE_FAILURE 4 
-#define TARGET_FILE_TRUNC 5
-#define INTERNAL_ERROR 6
-#define NAME "NFIPv4CACHE"
-#define IPV4CACHE_MAGIC "IPV4CACHE" 
-#define IPV4CACHE_VERSION 1 
-#define HASH_ONE_TO_ONE 1
-#define HDRSTRSZ 128  
-#define MAXSOURCES 16
-#define EXPERIMENTAL "EXPERIMENTAL"
-
-/* Netflow types */
-#define TYPE_NETFLOW 1
-#define TYPE_PCAP 2
-#define TYPE_OTHER 3
-
-/* Merge types */
-#define NOT_MERGED 1
-
-#define TZSZ 32
-/* IPv4Cache Header */                                                          
-    
-typedef struct tz_data_s {
-    uint64_t timezone;
-    char     tzname [TZSZ][2];
-    uint32_t daylight;
-} tz_data_t;          
-                                                                  
-typedef struct ipv4cache_hdr_s {                                                
-    char            magic[9];                                                          
-    uint8_t         version;                                                        
-    uint8_t         hash_function;                                                  
-    uint8_t         mergeop;
-    char            source [HDRSTRSZ][MAXSOURCES];
-    uint8_t         type;
-    char            creator[HDRSTRSZ];
-    struct timeval  creator_time; 
-    tz_data_t       creator_tz;
-    tz_data_t       observation_tz;
-    struct timeval  firstseen;
-    struct timeval  lastseen;
-    char            description[HDRSTRSZ];                                          
-}ipv4cache_hdr_t;                     
+#include "ipv4index.h"             
 
 ipv4cache_hdr_t* create_local_header(char* source);
 
