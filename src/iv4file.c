@@ -19,6 +19,7 @@
 #include "iv4file.h"
 #include "ipv4index.h"
 #include "stdlib.h"
+#include <assert.h>
 /*
  * Helper function for the function build_netflow_hdr. This function sets the
  * current timezone settings in the ipv4cache_hdr_t headers specified as 
@@ -107,16 +108,17 @@ ipv4cache_hdr_t* create_local_header(char* source)
     return build_netflow_hdr(source, (tz_data_t*)&tz);
 }
 
-int store_bitindex(char* filename, ipv4cache_hdr_t* hdr, uint8_t* bitindex)
+int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
 {
     gzFile *fp;
     int r,out;
     out = 0; 
+    assert(ipv4index->bitindex); 
     fp = gzopen(filename,"wb");
     if (fp) {
         r = gzwrite(fp, hdr, sizeof(ipv4cache_hdr_t));
         if (r == sizeof(ipv4cache_hdr_t)) {
-            r = gzwrite(fp, bitindex, SPACE_SIZE);
+            r = gzwrite(fp, ipv4index->bitindex, SPACE_SIZE);
             if (r == SPACE_SIZE) {
                 out = 1;
             }else{

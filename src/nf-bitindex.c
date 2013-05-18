@@ -265,7 +265,7 @@ int batch_processing(char *source, char* targetfile, int segment_id)
     }
     if (targetfile) {
         printf("[INFO] Creating %s\n",targetfile);
-        if (store_bitindex(targetfile, hdr, ipv4index->bitindex)){
+        if (store_bitindex(ipv4index, targetfile, hdr)){
             printf("[INFO] Sucessfully created %s",targetfile);
             r = EXIT_SUCCESS;
         } else {
