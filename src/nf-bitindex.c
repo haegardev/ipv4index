@@ -58,43 +58,6 @@ uint8_t* bitindex_new(uint32_t nelem)
     return bitindex = calloc((nelem / 8) + 1,1);
 }
 
-/* Creates a simplified new header for a bitindex file. A source can be 
- * specified as parameter to identify the source of IP addresses presented
- * in the corresponding bitindex. A timezone structure related to the sources
- * of IP addresses can also be specified.
- * On success this function returns and ipv4cache_hdr_t header.
- * On error it returns NULL.
- * Other fields such as the firstseen, lastseen fields are not set and should
- * be set later. The memory used by the returned header should be freed.
- */
-ipv4cache_hdr_t* build_netflow_hdr(char* source, tz_data_t *tz)
-{
-    ipv4cache_hdr_t* hdr;
-    hdr = calloc(sizeof(ipv4cache_hdr_t),1);
-    /* Set the fields */
-    if (hdr) {
-        strncpy((char*)&hdr->magic, (char*)&IPV4CACHE_MAGIC, HDRSTRSZ);
-        hdr->version = IPV4CACHE_VERSION;
-        hdr->hash_function = HASH_ONE_TO_ONE;  
-        hdr->mergeop = NOT_MERGED;
-        strncpy((char*)&(hdr->source[0]),source, HDRSTRSZ); 
-        hdr->type = TYPE_NETFLOW;
-        strncpy((char*)&(hdr->creator), NAME, HDRSTRSZ); 
-        set_current_tz(hdr);
-        /* Copy the observation time zone info */
-        hdr->observation_tz.timezone = tz->timezone;
-        hdr->observation_tz.daylight = tz->daylight;
-        strncpy((char*)&hdr->observation_tz.tzname[0], tz->tzname[0],TZSZ);
-        strncpy((char*)&hdr->observation_tz.tzname[1], tz->tzname[1],TZSZ);
-        /* Set description */
-        strncpy((char*)&hdr->description,"EXPERIMENTAL", strlen(EXPERIMENTAL));
-        /* Put a timestamp in the structure */
-        gettimeofday(&(hdr->creator_time),NULL);
-        /* The first seen field and the last seen field are later set */
-        hdr->firstseen.tv_sec = 0xFFFFFFFF;
-    }
-    return hdr;
-}
 
 /* 
  * Loads an ipv4cache header. This function is a helper function for the 
