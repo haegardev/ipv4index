@@ -52,3 +52,24 @@ int init_shm(char* idfile)
     }
     return EXIT_FAILURE;
 }
+
+int reset_shm(int segment_id)
+{
+    uint8_t* bitindex;
+    if ((bitindex=(uint8_t*)shmat(segment_id, 0, SHM_RND)) < 0) {
+        //FIXME use proper error handling
+        //fprintf(stderr,"Failed to attach to shared memory segment id=%d cause=%s\n",
+        //            segment_id, strerror(errno));
+        //return EXIT_FAILURE;
+    }
+    printf("[INFO] Reset started ...\n");
+    bzero(bitindex, SPACE_SIZE);
+    if (shmdt(bitindex)<0) {
+        //fprintf(stderr,"Could not detach from shared memory segment\n");
+        //return EXIT_FAILURE;
+    } 
+    //FIXME use proper error handling
+    //printf("[INFO] Reset ended and successfully detached ...\n");
+    /* Assume that everything went fine */
+    return EXIT_SUCCESS;
+}
