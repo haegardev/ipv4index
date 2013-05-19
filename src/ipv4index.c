@@ -50,4 +50,14 @@ uint8_t test_bit(uint8_t* bs, uint32_t addr)
     return bs[addr>>3] & (1 << (addr-((addr>>3)<<3)));    
 } 
 
+void dump(uint8_t* bitindex)
+{   
+    int i;
+    printf("--- BEGIN ---\n");
+    for (i=0;i<SPACE / 8;i++) {
+        printf("%d %d\n", i, bitindex[i]);
+    }
+    printf("--- END ---\n");
+}
+
 

@@ -21,6 +21,7 @@
 #include <stdint.h>
 #include <sys/time.h>
 #include <stdlib.h>
+#include <stdio.h>
 #define BITINDEX_SET(bs, addr) bs[addr>>3] |= 1 << (addr-((addr>>3)<<3))
 #define SPACE 0xFFFFFFFF
 #define LASTBLOCK 536854528
@@ -119,5 +120,8 @@ uint8_t bit_index_set(uint8_t* bs, uint32_t addr);
  * Returns a positive number if the IP address is known
  */ 
 uint8_t test_bit(uint8_t* bs, uint32_t addr);
+
+/* Dumps a bit index (bitindex) on standard output for debugging */
+void dump(uint8_t* bitindex);
 
 #endif

@@ -44,17 +44,6 @@
 #include "iv4ipc.h"
 #include "nf-reader.h"
 
-/* Dumps a bit index (bitindex) on standard output for debugging */
-void dump(uint8_t* bitindex)
-{   
-    int i;
-    printf("--- BEGIN ---\n");
-    for (i=0;i<SPACE / 8;i++) {
-        printf("%d %d\n", i, bitindex[i]);
-    }
-    printf("--- END ---\n");
-}
-
 
 void usage(void)
 {
