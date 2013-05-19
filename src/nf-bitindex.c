@@ -156,15 +156,12 @@ int batch_processing(char *source, char* targetfile, int segment_id)
 {
     int i,r;
     char *filename;
-    ipv4cache_hdr_t* hdr;
     ipv4index_t* ipv4index;
  
     r = EXIT_FAILURE; /* Return code */
     /* FIXME assume that the timezone of the netflow collector is the same
      * than the timezone configured on this machine
      */
-    if (!(hdr = create_local_header(source)))
-        goto out;
     
     /* Check if the data should be exported in shared memory segment */
     if (segment_id){
@@ -184,6 +181,10 @@ int batch_processing(char *source, char* targetfile, int segment_id)
         if (!(ipv4index = bitindex_new(SPACE, FULLIPV4INDEX)))
             goto out;
     }
+    /* Initialize the locaql header */
+    if (!(ipv4index->header = create_local_header(source)))
+        goto out;
+
     /* A bit index is needed here either shared or private */
     filename = calloc(1024,1);
     if (!filename)  
@@ -205,7 +206,7 @@ int batch_processing(char *source, char* targetfile, int segment_id)
     }
     if (targetfile) {
         printf("[INFO] Creating %s\n",targetfile);
-        if (store_bitindex(ipv4index, targetfile, hdr)){
+        if (store_bitindex(ipv4index, targetfile, ipv4index->header)){
             printf("[INFO] Sucessfully created %s",targetfile);
             r = EXIT_SUCCESS;
         } else {
@@ -220,9 +221,9 @@ int batch_processing(char *source, char* targetfile, int segment_id)
             r = EXIT_SUCCESS;
     }
 out:
-    if (hdr)
-        free(hdr);
     //FIXME write a destructor
+    if (ipv4index->header)
+        free(ipv4index->header);
     if (!segment_id && ipv4index && ipv4index->bitindex)
         free(ipv4index->bitindex);
     if (!segment_id && ipv4index)

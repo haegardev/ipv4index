@@ -109,6 +109,7 @@ ipv4cache_hdr_t* create_local_header(char* source)
     return build_netflow_hdr(source, (tz_data_t*)&tz);
 }
 
+//FIXME header does not need to be passed as command argument
 int store_bitindex(ipv4index_t* ipv4index, char* filename, ipv4cache_hdr_t* hdr)
 {
     gzFile *fp;
