@@ -45,4 +45,9 @@ uint8_t bit_index_set(uint8_t* bs, uint32_t addr)
     return bs[cell] |= 1 << p;
 }
 
+uint8_t test_bit(uint8_t* bs, uint32_t addr)
+{
+    return bs[addr>>3] & (1 << (addr-((addr>>3)<<3)));    
+} 
+
 

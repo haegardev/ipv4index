@@ -114,5 +114,10 @@ ipv4index_t* bitindex_new(uint32_t nelem, int flags);
  * build. Therefore the macro BITINDEX_SET should be used
  */ 
 uint8_t bit_index_set(uint8_t* bs, uint32_t addr);
+/* Test if an IPv4 address addr is known in the bitset bs.
+ * Returns 0 if the IP address is not known
+ * Returns a positive number if the IP address is known
+ */ 
+uint8_t test_bit(uint8_t* bs, uint32_t addr);
 
 #endif

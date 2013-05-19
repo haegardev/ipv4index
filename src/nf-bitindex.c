@@ -44,15 +44,6 @@
 #include "iv4ipc.h"
 #include "nf-reader.h"
 
-/* Test if an IPv4 address addr is known in the bitset bs.
- * Returns 0 if the IP address is not known
- * Returns a positive number if the IP address is known
- */ 
-uint8_t test_bit(uint8_t* bs, uint32_t addr)
-{
-    return bs[addr>>3] & (1 << (addr-((addr>>3)<<3)));    
-} 
-
 /* Dumps a bit index (bitindex) on standard output for debugging */
 void dump(uint8_t* bitindex)
 {   
