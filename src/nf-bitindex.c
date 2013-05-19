@@ -42,8 +42,6 @@
 #include "ipv4index.h"             
 #include "iv4file.h"
 #include "iv4ipc.h"
-ipv4cache_hdr_t* create_local_header(char* source);
-
 
 /*
  * Initialize a new bitindex.
