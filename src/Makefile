@@ -1,3 +1,5 @@
+iv4idx-update:	iv4idx-update.o nf-bitindex
+	gcc -Wall -o iv4idx-update iv4idx-update.o -ggdb
 nf-bitindex:	nf-bitindex.o	iv4file.o iv4ipc.o nf-reader.o ipv4index.o
 	gcc -o nf-bitindex nf-bitindex.o iv4file.o iv4ipc.o nf-reader.o ipv4index.o -ggdb -lnfdump `pkg-config --libs glib-2.0` -lz
 
@@ -15,8 +17,12 @@ nf-reader.o:	nf-reader.c
 ipv4index.o:	ipv4index.c
 	gcc -Wall -c ipv4index.c -ggdb
 
+iv4idx-update.o:	iv4idx-update.c
+	gcc -Wall -c iv4idx-update.c -ggdb
+
 clean:
 	- rm nf-bitindex
+	- rm iv4idx-update
 	- rm *.o
 
 
