@@ -24,6 +24,7 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <strings.h>
 /* Function to iniliatlize a shared memory segment. The shared memory segment
  * identifier is stored in the idfile using decimal notation (fitted for 
  * iprm)
