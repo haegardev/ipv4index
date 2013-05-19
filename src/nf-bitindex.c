@@ -44,23 +44,6 @@
 #include "iv4ipc.h"
 #include "nf-reader.h"
 
-/* Sets a bit related to an IPV4 address defined in the parameter addr. The 
- * bitset bs is updated. If a lot of such INSERT operations are done, this
- * function should not be used because for each operation a stackframe is 
- * build. Therefore the macro BITINDEX_SET should be used
- */ 
-uint8_t bit_index_set(uint8_t* bs, uint32_t addr)
-{
-    uint32_t cell;
-    uint32_t x;
-    uint8_t p;
-    cell = addr>>3;
-    x = (addr>>3)<<3;
-    p = addr-x; 
-    //DEBUG printf("cell %d, x %d,p %d\n",cell, x, p);
-    return bs[cell] |= 1 << p;
-}
-
 /* Test if an IPv4 address addr is known in the bitset bs.
  * Returns 0 if the IP address is not known
  * Returns a positive number if the IP address is known

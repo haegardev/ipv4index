@@ -108,4 +108,11 @@ typedef struct ipv4index_s {
 
 ipv4index_t* bitindex_new(uint32_t nelem, int flags);
 
+/* Sets a bit related to an IPV4 address defined in the parameter addr. The 
+ * bitset bs is updated. If a lot of such INSERT operations are done, this
+ * function should not be used because for each operation a stackframe is 
+ * build. Therefore the macro BITINDEX_SET should be used
+ */ 
+uint8_t bit_index_set(uint8_t* bs, uint32_t addr);
+
 #endif

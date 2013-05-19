@@ -32,3 +32,17 @@ ipv4index_t* bitindex_new(uint32_t nelem, int flags)
     /* Somewhere no memory is available */
     return NULL;
 }
+
+uint8_t bit_index_set(uint8_t* bs, uint32_t addr)
+{
+    uint32_t cell;
+    uint32_t x;
+    uint8_t p;
+    cell = addr>>3;
+    x = (addr>>3)<<3;
+    p = addr-x; 
+    //DEBUG printf("cell %d, x %d,p %d\n",cell, x, p);
+    return bs[cell] |= 1 << p;
+}
+
+
