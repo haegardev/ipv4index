@@ -43,30 +43,6 @@
 #include "iv4file.h"
 #include "iv4ipc.h"
 #include "nf-reader.h"
-/*
- * Initialize a new bitindex.
- * The number of bits is specified with the parameter nelem.
- * Returns a pointer to the an ipv4index structure on success.
- * The bitindex itself is in ipv4index->bitindex which also initialized
- * Returns NULL when no memory is available.
- * The memory should be freed when it is not used.
- */
-ipv4index_t* bitindex_new(uint32_t nelem, int flags)
-{
-    ipv4index_t* self;
-    self = calloc(sizeof(ipv4index_t),1);
-    if (self) {
-        if (flags) {
-            self->bitindex = calloc((nelem / 8) + 1 , 1);
-            if (!self->bitindex)
-                return NULL;
-        }
-        return self; 
-    }
-    /* Somewhere no memory is available */
-    return NULL;
-}
-
 
 /* Sets a bit related to an IPV4 address defined in the parameter addr. The 
  * bitset bs is updated. If a lot of such INSERT operations are done, this

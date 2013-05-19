@@ -20,6 +20,7 @@
 #define IPV4INDEX
 #include <stdint.h>
 #include <sys/time.h>
+#include <stdlib.h>
 #define BITINDEX_SET(bs, addr) bs[addr>>3] |= 1 << (addr-((addr>>3)<<3))
 #define SPACE 0xFFFFFFFF
 #define LASTBLOCK 536854528
@@ -95,4 +96,16 @@ typedef struct ipv4index_s {
     int shadow_errno;
     ipv4cache_hdr_t* header;
 } ipv4index_t;
+
+/*
+ * Initialize a new bitindex.
+ * The number of bits is specified with the parameter nelem.
+ * Returns a pointer to the an ipv4index structure on success.
+ * The bitindex itself is in ipv4index->bitindex which also initialized
+ * Returns NULL when no memory is available.
+ * The memory should be freed when it is not used.
+ */
+
+ipv4index_t* bitindex_new(uint32_t nelem, int flags);
+
 #endif
